@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29728.190
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F6C35712-95AF-482D-B483-C292E0A2A14C}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Screenshots", "Screenshots", "{64BAC522-F066-424B-9B1E-AA009D305312}"
+	ProjectSection(SolutionItems) = preProject
+		Screenshots\CommandLineOptions.png = Screenshots\CommandLineOptions.png
+		Screenshots\Files.png = Screenshots\Files.png
+		Screenshots\SampleExecution.png = Screenshots\SampleExecution.png
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleAppCore", "ConsoleAppCore\ConsoleAppCore.csproj", "{793769F1-2A40-4F67-B6BA-F3883C68F49C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{793769F1-2A40-4F67-B6BA-F3883C68F49C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{793769F1-2A40-4F67-B6BA-F3883C68F49C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{793769F1-2A40-4F67-B6BA-F3883C68F49C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{793769F1-2A40-4F67-B6BA-F3883C68F49C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5A52387E-AF7A-4175-AF91-3362C45EADF5}
+	EndGlobalSection
+EndGlobal
