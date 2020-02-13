@@ -29,5 +29,10 @@
         /// Boolean indicating if a listing of available bots should be returned
         /// </summary>
         public bool ListBots = false;
+
+        /// <summary>
+        /// Boolean indicating if a fresh snapshot should be requested from the Ring device before downloading it. If set to false, the latest cached snapshot will be used which is faster.
+        /// </summary>
+        public bool ForceUpdateSnapshot = true;
     }
 }

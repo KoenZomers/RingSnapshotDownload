@@ -148,6 +148,12 @@ namespace KoenZomers.Ring.SnapshotDownload
                 var downloadFileName = $"{configuration.DeviceId} - {DateTime.Now:yyyy-MM-dd HH-mm-ss}.jpg";
                 var downloadFullPath = Path.Combine(configuration.OutputPath, downloadFileName);
 
+                if(configuration.ForceUpdateSnapshot)
+                {
+                    Console.WriteLine("Requesting Ring device to capture a new snapshot");
+                    await session.UpdateSnapshot(configuration.DeviceId.Value);
+                }
+
                 // Retrieve the snapshot
                 Console.WriteLine($"Downloading snapshot from Ring device with ID {configuration.DeviceId} to {downloadFullPath}");
                 await session.GetLatestSnapshot(configuration.DeviceId.Value, downloadFullPath);
@@ -193,6 +199,11 @@ namespace KoenZomers.Ring.SnapshotDownload
                 configuration.ListBots = true;
             }
 
+            if (args.Contains("-forceupdate"))
+            {
+                configuration.ForceUpdateSnapshot = true;
+            }
+
             if (args.Contains("-deviceid"))
             {
                 if (int.TryParse(args[args.IndexOf("-deviceid") + 1], out int deviceId))
@@ -210,15 +221,17 @@ namespace KoenZomers.Ring.SnapshotDownload
         private static void DisplayHelp()
         {
             Console.WriteLine("Usage:");
-            Console.WriteLine("   RingSnapshotDownload.exe -username <username> -password <password> [-out <folder location> -type <motion/ring/...> -lastdays X -startdate <date> -enddate <date>]");
+            Console.WriteLine("   RingSnapshotDownload.exe -username <username> -password <password> [-out <folder location> -deviceid <ring device id> -list -forceupdate]");
             Console.WriteLine();
             Console.WriteLine("username: Username of the account to use to log on to Ring");
             Console.WriteLine("password: Password of the account to use to log on to Ring");
             Console.WriteLine("out: The folder where to store the snapshot (optional, will use current directory if not specified)");
             Console.WriteLine("list: Returns the list with all Ring devices and their ids you can user with -deviceid");
             Console.WriteLine("deviceid: Id of the Ring device from wich you want to capture the screenshot. Use -list to retrieve all ids.");
+            Console.WriteLine("forceupdate: Requests the Ring device to capture a new snapshot before downloading. If not provided, the latest cached snapshot will be taken.");
             Console.WriteLine();
             Console.WriteLine("Example:");
+            Console.WriteLine("   RingSnapshotDownload.exe -username my@email.com -password mypassword -deviceid 12345 -forceupdate -out d:\\screenshots");
             Console.WriteLine("   RingSnapshotDownload.exe -username my@email.com -password mypassword -deviceid 12345 -out d:\\screenshots");
             Console.WriteLine("   RingSnapshotDownload.exe -username my@email.com -password mypassword -deviceid 12345");
             Console.WriteLine("   RingSnapshotDownload.exe -username my@email.com -password mypassword -list");

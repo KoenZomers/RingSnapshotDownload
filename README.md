@@ -52,6 +52,8 @@ With this tool in its current state you can:
 
 - Log on once to a two factor authentication enabled Ring account and then have it use the retrieved refresh token to run unattended on subsequent runs
 - Download the latest snapshot from your Ring device
+- List all Ring doorbells and Ring stickupcams you have available under your Ring account
+- Force the Ring device to capture a fresh snapshot
 
 ## Feedback
 
