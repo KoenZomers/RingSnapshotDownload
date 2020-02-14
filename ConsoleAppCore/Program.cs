@@ -38,7 +38,7 @@ namespace KoenZomers.Ring.SnapshotDownload
 
             var appVersion = Assembly.GetExecutingAssembly().GetName().Version;
 
-            Console.WriteLine("Ring Snapshot Download Tool v{0}.{1}.{2} by Koen Zomers", new object[] { appVersion.Major, appVersion.Minor, appVersion.Build });
+            Console.WriteLine($"Ring Snapshot Download Tool v{appVersion.Major}.{appVersion.Minor}.{appVersion.Build}.{appVersion.Revision} by Koen Zomers");
             Console.WriteLine();
 
             // Ensure arguments have been provided
@@ -125,8 +125,17 @@ namespace KoenZomers.Ring.SnapshotDownload
 
                 if (devices.AuthorizedDoorbots.Count > 0)
                 {
-                    Console.WriteLine("Doorbells");
+                    Console.WriteLine("Authorized Doorbells");
                     foreach (var device in devices.AuthorizedDoorbots)
+                    {
+                        Console.WriteLine($"{device.Id} - {device.Description}");
+                    }
+                    Console.WriteLine();
+                }
+                if (devices.Doorbots.Count > 0)
+                {
+                    Console.WriteLine("Doorbells");
+                    foreach (var device in devices.Doorbots)
                     {
                         Console.WriteLine($"{device.Id} - {device.Description}");
                     }
