@@ -18,6 +18,10 @@ Console application written in .NET Core 3.1 compiled for Windows, Raspberry Pi,
 
 ## Version History
 
+1.0.0.1 - February 14, 2020
+
+- Ring 2 doorbells will now also be returned when doing a `-list`
+
 1.0.0.0 - February 13, 2020
 
 - Initial version
