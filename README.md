@@ -18,6 +18,14 @@ Console application written in .NET Core 3.1 compiled for Windows, Raspberry Pi,
 
 ## Version History
 
+1.0.1.0 - April 29, 2020
+
+- Changed some async handling of downloads
+- Added check with the Ring API on when the latest available camera capture was taken and use that timestamp in the file so if there is no newer image available, the old one will be overwritten
+- Added a one second delay after doing a force refresh to allow the Ring API to fetch an update from the doorbell
+- Added -maxretries optional flag which allows specifying how many times to retry fetching the snapshot with 1 second intervals if the Ring API returns an error. This happens when Ring has no recent snapshot of your Ring device on file and it couldn't retrieve a new one from the Ring device yet.
+- Updated [Ring API](https://github.com/KoenZomers/RingApi) to [0.4.3.2](https://www.nuget.org/packages/KoenZomers.Ring.Api/0.4.3.2)
+
 1.0.0.1 - February 14, 2020
 
 - Ring 2 doorbells will now also be returned when doing a `-list`

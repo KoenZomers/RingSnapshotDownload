@@ -5,6 +5,9 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.IO;
 using System.Threading.Tasks;
+using System.Threading;
+using System.Linq;
+using System.Net;
 
 namespace KoenZomers.Ring.SnapshotDownload
 {
@@ -78,7 +81,7 @@ namespace KoenZomers.Ring.SnapshotDownload
                 // Use refresh token from previous session
                 Console.WriteLine("Authenticating using refresh token from previous session");
 
-                session = Session.GetSessionByRefreshToken(RefreshToken).Result;
+                session = await Session.GetSessionByRefreshToken(RefreshToken);
             }
             else
             {
@@ -89,7 +92,7 @@ namespace KoenZomers.Ring.SnapshotDownload
 
                 try
                 {
-                    session.Authenticate().Wait();
+                    await session.Authenticate();
                 }
                 catch (Exception e) when (e.InnerException != null && e.InnerException.GetType() == typeof(Api.Exceptions.TwoFactorAuthenticationRequiredException))
                 {
@@ -98,7 +101,7 @@ namespace KoenZomers.Ring.SnapshotDownload
                     var token = Console.ReadLine();
 
                     // Authenticate again using the two factor token
-                    session.Authenticate(twoFactorAuthCode: token).Wait();
+                    await session.Authenticate(twoFactorAuthCode: token);
                 }
                 catch (System.Net.WebException)
                 {
@@ -153,19 +156,57 @@ namespace KoenZomers.Ring.SnapshotDownload
             }
             else
             {
-                // Construct the filename and path where to save the file
-                var downloadFileName = $"{configuration.DeviceId} - {DateTime.Now:yyyy-MM-dd HH-mm-ss}.jpg";
-                var downloadFullPath = Path.Combine(configuration.OutputPath, downloadFileName);
-
                 if(configuration.ForceUpdateSnapshot)
                 {
                     Console.WriteLine("Requesting Ring device to capture a new snapshot");
                     await session.UpdateSnapshot(configuration.DeviceId.Value);
+
+                    // Give it timt to process the update
+                    Thread.Sleep(TimeSpan.FromSeconds(1));
                 }
+
+                // By default the screenshot will be tagged with the current date/time unless we can retrieve information from Ring when the latest snapshot was really taken
+                var timeStamp = DateTime.Now;
+
+                // Retrieve when the latest available snapshot was taken
+                var doorbotTimeStamps = await session.GetDoorbotSnapshotTimestamp(configuration.DeviceId.Value);
+                
+                // Validate if we received timestamps
+                if(doorbotTimeStamps.Timestamp.Count > 0)
+                {
+                    // Filter out timestamps which are not for the doorbot we are requesting and take the most recent snapshot only
+                    var latestDoorbotTimeStamp = doorbotTimeStamps.Timestamp.Where(t => t.DoorbotId == configuration.DeviceId.Value.ToString()).OrderByDescending(t => t.TimestampEpoch).FirstOrDefault();
+
+                    // If we have a result and the result has an Epoch timestamp on it, use that as the marker for when the screenshot has been taken
+                    if (latestDoorbotTimeStamp != null && latestDoorbotTimeStamp.TimestampEpoch.HasValue)
+                    {
+                        // Convert from the Epoch time to a DateTime we can use
+                        timeStamp = latestDoorbotTimeStamp.Timestamp.Value;
+                    }
+                }
+
+                // Construct the filename and path where to save the file
+                var downloadFileName = $"{configuration.DeviceId} - {timeStamp:yyyy-MM-dd HH-mm-ss}.jpg";
+                var downloadFullPath = Path.Combine(configuration.OutputPath, downloadFileName);
 
                 // Retrieve the snapshot
                 Console.WriteLine($"Downloading snapshot from Ring device with ID {configuration.DeviceId} to {downloadFullPath}");
-                await session.GetLatestSnapshot(configuration.DeviceId.Value, downloadFullPath);
+                short attempt = 0;
+                do
+                {
+                    attempt++;
+                    try
+                    {
+                        await session.GetLatestSnapshot(configuration.DeviceId.Value, downloadFullPath);
+                        break;
+                    }
+                    catch (WebException e) when (e.Message.Contains("404"))
+                    {
+                        // Ring tends to throw a 404 if it has no snapshot available and couldn't retrieve one in time, retry it
+                        Console.WriteLine($"Not found returned by Ring API, retrying ({attempt}/{configuration.MaximumRetries})");
+                        Thread.Sleep(TimeSpan.FromSeconds(1));
+                    }
+                } while (attempt < configuration.MaximumRetries);
 
                 Console.WriteLine();
             }
@@ -221,6 +262,14 @@ namespace KoenZomers.Ring.SnapshotDownload
                 }
             }
 
+            if (args.Contains("-maxretries"))
+            {
+                if (short.TryParse(args[args.IndexOf("-maxretries") + 1], out short maxretries))
+                {
+                    configuration.MaximumRetries = maxretries;
+                }
+            }
+
             return configuration;
         }
 
@@ -238,6 +287,7 @@ namespace KoenZomers.Ring.SnapshotDownload
             Console.WriteLine("list: Returns the list with all Ring devices and their ids you can user with -deviceid");
             Console.WriteLine("deviceid: Id of the Ring device from wich you want to capture the screenshot. Use -list to retrieve all ids.");
             Console.WriteLine("forceupdate: Requests the Ring device to capture a new snapshot before downloading. If not provided, the latest cached snapshot will be taken.");
+            Console.WriteLine("maxretries: Amount of times to retry downloading the snapshot when Ring returns an error. 3 is default.");
             Console.WriteLine();
             Console.WriteLine("Example:");
             Console.WriteLine("   RingSnapshotDownload.exe -username my@email.com -password mypassword -deviceid 12345 -forceupdate -out d:\\screenshots");
