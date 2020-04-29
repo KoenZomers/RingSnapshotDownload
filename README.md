@@ -18,7 +18,7 @@ Console application written in .NET Core 3.1 compiled for Windows, Raspberry Pi,
 
 ## Version History
 
-1.0.1.0 - April 29, 2020
+[1.0.1.0](https://github.com/KoenZomers/RingSnapshotDownload/releases/tag/1.0.1.0) - April 29, 2020
 
 - Changed some async handling of downloads
 - Added check with the Ring API on when the latest available camera capture was taken and use that timestamp in the file so if there is no newer image available, the old one will be overwritten
