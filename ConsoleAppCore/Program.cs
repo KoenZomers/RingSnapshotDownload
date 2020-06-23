@@ -94,7 +94,7 @@ namespace KoenZomers.Ring.SnapshotDownload
                 {
                     await session.Authenticate();
                 }
-                catch (Exception e) when (e.InnerException != null && e.InnerException.GetType() == typeof(Api.Exceptions.TwoFactorAuthenticationRequiredException))
+                catch (Api.Exceptions.TwoFactorAuthenticationRequiredException)
                 {
                     // Two factor authentication is enabled on the account. The above Authenticate() will trigger a text message to be sent. Ask for the token sent in that message here.
                     Console.WriteLine($"Two factor authentication enabled on this account, please enter the token received in the text message on your phone:");
@@ -103,7 +103,12 @@ namespace KoenZomers.Ring.SnapshotDownload
                     // Authenticate again using the two factor token
                     await session.Authenticate(twoFactorAuthCode: token);
                 }
-                catch (System.Net.WebException)
+                catch(Api.Exceptions.ThrottledException)
+                {
+                    Console.WriteLine("Two factor authentication is required, but too many tokens have been requested recently. Wait for a few minutes and try connecting again.");
+                    Environment.Exit(1);
+                }
+                catch (WebException)
                 {
                     Console.WriteLine("Connection failed. Validate your credentials.");
                     Environment.Exit(1);
@@ -123,7 +128,7 @@ namespace KoenZomers.Ring.SnapshotDownload
                 
                 var devices = await session.GetRingDevices();
 
-                Console.WriteLine($"{devices.AuthorizedDoorbots.Count + devices.StickupCams.Count} found");
+                Console.WriteLine($"{devices.Doorbots.Count + devices.AuthorizedDoorbots.Count + devices.StickupCams.Count} found");
                 Console.WriteLine();
 
                 if (devices.AuthorizedDoorbots.Count > 0)
