@@ -25,6 +25,11 @@
     <DebugSymbols>false</DebugSymbols>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DebugType>portable</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="KoenZomers.Ring.Api" Version="0.4.3.2" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.7.0" />
