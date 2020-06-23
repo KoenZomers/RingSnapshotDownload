@@ -13,7 +13,7 @@
     <Copyright>Koen Zomers</Copyright>
     <PackageProjectUrl>https://github.com/KoenZomers/RingSnapshotDownload</PackageProjectUrl>
     <PackageTags>Ring</PackageTags>
-    <PackageReleaseNotes>- Bufgix in two factor authentication not working
+    <PackageReleaseNotes>- Bugfix in two factor authentication not working
 - Bugfix in the counter potentially not showing the proper amount of devices when using -list
 - Added notice if the two factor authentication fails due to too many recent requests for it</PackageReleaseNotes>
     <AssemblyVersion>1.0.2.0</AssemblyVersion>
