@@ -18,6 +18,12 @@ Console application written in .NET Core 3.1 compiled for Windows, Raspberry Pi,
 
 ## Version History
 
+[1.0.2.0](https://github.com/KoenZomers/RingSnapshotDownload/releases/tag/1.0.2.0) - June 23, 2020
+
+- Bugfix in two factor authentication not working
+- Bugfix in the counter potentially not showing the proper amount of devices when using -list
+- Added notice if the two factor authentication fails due to too many recent requests for it
+
 [1.0.1.0](https://github.com/KoenZomers/RingSnapshotDownload/releases/tag/1.0.1.0) - April 29, 2020
 
 - Changed some async handling of downloads
