@@ -284,7 +284,7 @@ namespace KoenZomers.Ring.SnapshotDownload
         private static void DisplayHelp()
         {
             Console.WriteLine("Usage:");
-            Console.WriteLine("   RingSnapshotDownload.exe -username <username> -password <password> [-out <folder location> -deviceid <ring device id> -list -forceupdate]");
+            Console.WriteLine("   RingSnapshotDownload -username <username> -password <password> [-out <folder location> -deviceid <ring device id> -list -forceupdate]");
             Console.WriteLine();
             Console.WriteLine("username: Username of the account to use to log on to Ring");
             Console.WriteLine("password: Password of the account to use to log on to Ring");
@@ -295,10 +295,10 @@ namespace KoenZomers.Ring.SnapshotDownload
             Console.WriteLine("maxretries: Amount of times to retry downloading the snapshot when Ring returns an error. 3 is default.");
             Console.WriteLine();
             Console.WriteLine("Example:");
-            Console.WriteLine("   RingSnapshotDownload.exe -username my@email.com -password mypassword -deviceid 12345 -forceupdate -out d:\\screenshots");
-            Console.WriteLine("   RingSnapshotDownload.exe -username my@email.com -password mypassword -deviceid 12345 -out d:\\screenshots");
-            Console.WriteLine("   RingSnapshotDownload.exe -username my@email.com -password mypassword -deviceid 12345");
-            Console.WriteLine("   RingSnapshotDownload.exe -username my@email.com -password mypassword -list");
+            Console.WriteLine("   RingSnapshotDownload -username my@email.com -password mypassword -deviceid 12345 -forceupdate -out d:\\screenshots");
+            Console.WriteLine("   RingSnapshotDownload -username my@email.com -password mypassword -deviceid 12345 -out d:\\screenshots");
+            Console.WriteLine("   RingSnapshotDownload -username my@email.com -password mypassword -deviceid 12345");
+            Console.WriteLine("   RingSnapshotDownload -username my@email.com -password mypassword -list");
             Console.WriteLine();
         }
     }
