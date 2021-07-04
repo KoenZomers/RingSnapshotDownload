@@ -20,6 +20,10 @@ Console application written in .NET 5.0 compiled for Windows, Raspberry Pi, Linu
 
 ## Version History
 
+[1.1.0.1](https://github.com/KoenZomers/RingSnapshotDownload/releases/tag/1.1.0.0) - July 5, 2021
+
+- Changed configuration handling as the old method wasn't working well in .NET 5. The settings are now stores in Settings.json in the same folder from where you run the tool. Any parameters you provide will be stored in this config file, so you don't have to supply them again on subsequent runs. This new configuration is not backwards compatible with the previous configuration, so if you're upgrading, log in once by providing your username and password via the commandline and the values will get stored in the new config file.
+
 [1.1.0.0](https://github.com/KoenZomers/RingSnapshotDownload/releases/tag/1.1.0.0) - July 4, 2021
 
 - Updated to .NET 5.0
@@ -68,7 +72,7 @@ Console application written in .NET 5.0 compiled for Windows, Raspberry Pi, Linu
 
 ![](./Screenshots/Files.png)
 
-If you want to run this application unattended in i.e. a scheduled daily download script, ensure you run it once manually with your username and password. After this run it will store the refresh token and will run without needing a username, password or two factor authentication token on subsequent runs.
+If you want to run this application unattended in i.e. a scheduled daily download script, ensure you run it once manually with your username and password. After this run it will store the refresh token in a file called Settings.json and will run without needing a username, password or two factor authentication token on subsequent runs.
 
 ## Current functionality
 
