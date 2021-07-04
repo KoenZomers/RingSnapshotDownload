@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
@@ -69,11 +70,24 @@ namespace KoenZomers.Ring.SnapshotDownload
         public static async Task<Configuration> Load(string path)
         {
             var configuration = new Configuration();
-
+            
             if (!string.IsNullOrEmpty(path) && File.Exists(path))
             {
-                var settingsFileContents = await File.ReadAllTextAsync(path);
-                configuration = JsonSerializer.Deserialize<Configuration>(settingsFileContents);
+                System.Console.WriteLine($"Using settings from {path}");
+
+                try
+                {
+                    var settingsFileContents = await File.ReadAllTextAsync(path);
+                    configuration = JsonSerializer.Deserialize<Configuration>(settingsFileContents);
+                }
+                catch (IOException)
+                {
+                    Console.WriteLine("Unable to read contents of the settings file, skipping");
+                }
+                catch (JsonException)
+                {
+                    Console.WriteLine("Contens of the settings file are invalid, skipping");
+                }
             }
             
             configuration.ConfigFilePath = path;

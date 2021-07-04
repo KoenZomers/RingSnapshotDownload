@@ -16,7 +16,7 @@ namespace KoenZomers.Ring.SnapshotDownload
         /// <summary>
         /// Gets the location of the settings file
         /// </summary>
-        private static readonly string SettingsFilePath = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName) + "\\Settings.json";
+        private static readonly string SettingsFilePath = Path.Combine(Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName), "Settings.json");
 
         /// <summary>
         /// Configuration used by this application
