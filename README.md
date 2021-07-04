@@ -20,7 +20,7 @@ Console application written in .NET 5.0 compiled for Windows, Raspberry Pi, Linu
 
 ## Version History
 
-[1.1.0.1](https://github.com/KoenZomers/RingSnapshotDownload/releases/tag/1.1.0.0) - July 5, 2021
+[1.1.0.1](https://github.com/KoenZomers/RingSnapshotDownload/releases/tag/1.1.0.1) - July 5, 2021
 
 - Changed configuration handling as the old method wasn't working well in .NET 5. The settings are now stores in Settings.json in the same folder from where you run the tool. Any parameters you provide will be stored in this config file, so you don't have to supply them again on subsequent runs. This new configuration is not backwards compatible with the previous configuration, so if you're upgrading, log in once by providing your username and password via the commandline and the values will get stored in the new config file.
 
