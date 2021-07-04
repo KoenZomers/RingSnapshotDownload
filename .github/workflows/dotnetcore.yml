@@ -16,10 +16,18 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 3.1.101
+        dotnet-version: 5.0.7
     - name: Install dependencies
       run: dotnet restore
     - name: Build
       run: dotnet build --configuration Release --no-restore
-    - name: Test
-      run: dotnet test --no-restore --verbosity normal
+    - name: Publish Linux ARM
+      run: dotnet publish -p:PublishProfile=linux-arm
+    - name: Publish Linux x64
+      run: dotnet publish -p:PublishProfile=linux-x64
+    - name: Publish OSX x64
+      run: dotnet publish -p:PublishProfile=osx-x64
+    - name: Publish Windows x64
+      run: dotnet publish -p:PublishProfile=win-x64
+    - name: Publish Windows x86
+      run: dotnet publish -p:PublishProfile=win-x86
