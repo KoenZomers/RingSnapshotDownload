@@ -22,7 +22,7 @@ jobs:
     - name: Build
       run: dotnet build --configuration Release --no-restore
     - name: Publish Windows x86
-      run: dotnet publish -p:PublishProfile=win-x86 -o ${{ github.workspace }}/win-x86
+      run: dotnet publish -p:PublishSingleFile=true -p:PublishTrimmed=true -r win-x86 --self-contained true -o ${{ github.workspace }}/win-x86
     - name: Create release
       id: create_release
       uses: actions/create-release@v1
