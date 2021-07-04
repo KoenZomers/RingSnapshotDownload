@@ -1,6 +1,5 @@
 ﻿using System;
 using KoenZomers.Ring.Api;
-using System.Configuration;
 using System.Collections.Generic;
 using System.Reflection;
 using System.IO;
@@ -8,32 +7,21 @@ using System.Threading.Tasks;
 using System.Threading;
 using System.Linq;
 using System.Net;
+using System.Diagnostics;
 
 namespace KoenZomers.Ring.SnapshotDownload
 {
     class Program
     {
         /// <summary>
-        /// Refresh token to use to authenticate to the Ring API
+        /// Gets the location of the settings file
         /// </summary>
-        public static string RefreshToken
-        {
-            get { return ConfigurationManager.AppSettings["RefreshToken"]; }
-            set
-            {
-                var configFile = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-                if (configFile.AppSettings.Settings["RefreshToken"] == null)
-                {
-                    configFile.AppSettings.Settings.Add("RefreshToken", value);
-                }
-                else
-                {
-                    configFile.AppSettings.Settings["RefreshToken"].Value = value;
-                }
-                configFile.Save(ConfigurationSaveMode.Modified);
-                ConfigurationManager.RefreshSection(configFile.AppSettings.SectionInformation.Name);
-            }
-        }
+        private static readonly string SettingsFilePath = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName) + "\\Settings.json";
+
+        /// <summary>
+        /// Configuration used by this application
+        /// </summary>
+        public static Configuration Configuration { get; set; }
 
         static async Task Main(string[] args)
         {
@@ -44,51 +32,50 @@ namespace KoenZomers.Ring.SnapshotDownload
             Console.WriteLine($"Ring Snapshot Download Tool v{appVersion.Major}.{appVersion.Minor}.{appVersion.Build}.{appVersion.Revision} by Koen Zomers");
             Console.WriteLine();
 
-            // Ensure arguments have been provided
-            if (args.Length == 0)
+            // Load the configuration
+            Configuration = await Configuration.Load(SettingsFilePath);
+
+            // Parse the provided arguments
+            ParseArguments(args);
+
+            // Ensure we have the required configuration
+            if (string.IsNullOrWhiteSpace(Configuration.Username) && string.IsNullOrWhiteSpace(Configuration.RefreshToken))
             {
+                Console.WriteLine("Error: -username is required");
                 DisplayHelp();
                 Environment.Exit(1);
             }
 
-            // Parse the provided arguments
-            var configuration = ParseArguments(args);
-
-            // Ensure we have the required configuration
-            if (string.IsNullOrWhiteSpace(configuration.Username) && string.IsNullOrWhiteSpace(RefreshToken))
+            if (string.IsNullOrWhiteSpace(Configuration.Password) && string.IsNullOrWhiteSpace(Configuration.RefreshToken))
             {
-                Console.WriteLine("-username is required");
+                Console.WriteLine("Error: -password is required");
+                DisplayHelp();
                 Environment.Exit(1);
             }
 
-            if (string.IsNullOrWhiteSpace(configuration.Password) && string.IsNullOrWhiteSpace(RefreshToken))
+            if (!Configuration.DeviceId.HasValue && !Configuration.ListBots)
             {
-                Console.WriteLine("-password is required");
-                Environment.Exit(1);
-            }
-
-            if (!configuration.DeviceId.HasValue && !configuration.ListBots)
-            {
-                Console.WriteLine("-deviceid or -list is required");
+                Console.WriteLine("Error: -deviceid or -list is required");
+                DisplayHelp();
                 Environment.Exit(1);
             }
 
             // Connect to Ring
             Console.WriteLine("Connecting to Ring services");
             Session session;
-            if (!string.IsNullOrWhiteSpace(RefreshToken))
+            if (!string.IsNullOrWhiteSpace(Configuration.RefreshToken))
             {
                 // Use refresh token from previous session
                 Console.WriteLine("Authenticating using refresh token from previous session");
 
-                session = await Session.GetSessionByRefreshToken(RefreshToken);
+                session = await Session.GetSessionByRefreshToken(Configuration.RefreshToken);
             }
             else
             {
                 // Use the username and password provided
                 Console.WriteLine("Authenticating using provided username and password");
 
-                session = new Session(configuration.Username, configuration.Password);
+                session = new Session(Configuration.Username, Configuration.Password);
 
                 try
                 {
@@ -118,10 +105,11 @@ namespace KoenZomers.Ring.SnapshotDownload
             // If we have a refresh token, update the config file with it so we don't need to authenticate again next time
             if (session.OAuthToken != null)
             {
-                RefreshToken = session.OAuthToken.RefreshToken;
+                Configuration.RefreshToken = session.OAuthToken.RefreshToken;
+                Configuration.Save();
             }
 
-            if (configuration.ListBots)
+            if (Configuration.ListBots)
             {
                 // Retrieve all available Ring devices and list them
                 Console.Write("Retrieving all devices... ");
@@ -161,10 +149,10 @@ namespace KoenZomers.Ring.SnapshotDownload
             }
             else
             {
-                if(configuration.ForceUpdateSnapshot)
+                if(Configuration.ForceUpdateSnapshot)
                 {
                     Console.WriteLine("Requesting Ring device to capture a new snapshot");
-                    await session.UpdateSnapshot(configuration.DeviceId.Value);
+                    await session.UpdateSnapshot(Configuration.DeviceId.Value);
 
                     // Give it timt to process the update
                     Thread.Sleep(TimeSpan.FromSeconds(1));
@@ -174,13 +162,13 @@ namespace KoenZomers.Ring.SnapshotDownload
                 var timeStamp = DateTime.Now;
 
                 // Retrieve when the latest available snapshot was taken
-                var doorbotTimeStamps = await session.GetDoorbotSnapshotTimestamp(configuration.DeviceId.Value);
+                var doorbotTimeStamps = await session.GetDoorbotSnapshotTimestamp(Configuration.DeviceId.Value);
                 
                 // Validate if we received timestamps
                 if(doorbotTimeStamps.Timestamp.Count > 0)
                 {
                     // Filter out timestamps which are not for the doorbot we are requesting and take the most recent snapshot only
-                    var latestDoorbotTimeStamp = doorbotTimeStamps.Timestamp.Where(t => t.DoorbotId == configuration.DeviceId.Value.ToString()).OrderByDescending(t => t.TimestampEpoch).FirstOrDefault();
+                    var latestDoorbotTimeStamp = doorbotTimeStamps.Timestamp.Where(t => t.DoorbotId == Configuration.DeviceId.Value.ToString()).OrderByDescending(t => t.TimestampEpoch).FirstOrDefault();
 
                     // If we have a result and the result has an Epoch timestamp on it, use that as the marker for when the screenshot has been taken
                     if (latestDoorbotTimeStamp != null && latestDoorbotTimeStamp.TimestampEpoch.HasValue)
@@ -191,27 +179,27 @@ namespace KoenZomers.Ring.SnapshotDownload
                 }
 
                 // Construct the filename and path where to save the file
-                var downloadFileName = $"{configuration.DeviceId} - {timeStamp:yyyy-MM-dd HH-mm-ss}.jpg";
-                var downloadFullPath = Path.Combine(configuration.OutputPath, downloadFileName);
+                var downloadFileName = $"{Configuration.DeviceId} - {timeStamp:yyyy-MM-dd HH-mm-ss}.jpg";
+                var downloadFullPath = Path.Combine(Configuration.OutputPath, downloadFileName);
 
                 // Retrieve the snapshot
-                Console.WriteLine($"Downloading snapshot from Ring device with ID {configuration.DeviceId} to {downloadFullPath}");
+                Console.WriteLine($"Downloading snapshot from Ring device with ID {Configuration.DeviceId} to {downloadFullPath}");
                 short attempt = 0;
                 do
                 {
                     attempt++;
                     try
                     {
-                        await session.GetLatestSnapshot(configuration.DeviceId.Value, downloadFullPath);
+                        await session.GetLatestSnapshot(Configuration.DeviceId.Value, downloadFullPath);
                         break;
                     }
                     catch (WebException e) when (e.Message.Contains("404"))
                     {
                         // Ring tends to throw a 404 if it has no snapshot available and couldn't retrieve one in time, retry it
-                        Console.WriteLine($"Not found returned by Ring API, retrying ({attempt}/{configuration.MaximumRetries})");
+                        Console.WriteLine($"Not found returned by Ring API, retrying ({attempt}/{Configuration.MaximumRetries})");
                         Thread.Sleep(TimeSpan.FromSeconds(1));
                     }
-                } while (attempt < configuration.MaximumRetries);
+                } while (attempt < Configuration.MaximumRetries);
 
                 Console.WriteLine();
             }
@@ -225,45 +213,45 @@ namespace KoenZomers.Ring.SnapshotDownload
         /// Parses all provided arguments
         /// </summary>
         /// <param name="args">String array with arguments passed to this console application</param>
-        private static Configuration ParseArguments(IList<string> args)
+        private static void ParseArguments(IList<string> args)
         {
-            var configuration = new Configuration
-            {
-                Username = ConfigurationManager.AppSettings["RingUsername"],
-                Password = ConfigurationManager.AppSettings["RingPassword"],
-                OutputPath = Environment.CurrentDirectory
-            };
-
             if (args.Contains("-out"))
             {
-                configuration.OutputPath = args[args.IndexOf("-out") + 1];
+                Configuration.OutputPath = args[args.IndexOf("-out") + 1];
+            }
+            else
+            {
+                if (string.IsNullOrEmpty(Configuration.OutputPath))
+                {
+                    Configuration.OutputPath = Environment.CurrentDirectory;
+                }
             }
 
             if (args.Contains("-username"))
             {
-                configuration.Username = args[args.IndexOf("-username") + 1];
+                Configuration.Username = args[args.IndexOf("-username") + 1];
             }
 
             if (args.Contains("-password"))
             {
-                configuration.Password = args[args.IndexOf("-password") + 1];
+                Configuration.Password = args[args.IndexOf("-password") + 1];
             }
 
             if (args.Contains("-list"))
             {
-                configuration.ListBots = true;
+                Configuration.ListBots = true;
             }
 
             if (args.Contains("-forceupdate"))
             {
-                configuration.ForceUpdateSnapshot = true;
+                Configuration.ForceUpdateSnapshot = true;
             }
 
             if (args.Contains("-deviceid"))
             {
                 if (int.TryParse(args[args.IndexOf("-deviceid") + 1], out int deviceId))
                 {
-                    configuration.DeviceId = deviceId;
+                    Configuration.DeviceId = deviceId;
                 }
             }
 
@@ -271,11 +259,9 @@ namespace KoenZomers.Ring.SnapshotDownload
             {
                 if (short.TryParse(args[args.IndexOf("-maxretries") + 1], out short maxretries))
                 {
-                    configuration.MaximumRetries = maxretries;
+                    Configuration.MaximumRetries = maxretries;
                 }
             }
-
-            return configuration;
         }
 
         /// <summary>
