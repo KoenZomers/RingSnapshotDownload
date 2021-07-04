@@ -33,4 +33,10 @@
     <PackageReference Include="KoenZomers.Ring.Api" Version="0.4.3.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Settings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
