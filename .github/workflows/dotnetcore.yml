@@ -34,12 +34,9 @@ jobs:
         
     - name: Publish Windows x86
       run: dotnet publish -p:PublishSingleFile=true -p:PublishTrimmed=true -r win-x86 --self-contained true -o ${{ github.workspace }}/win-x86
-    - name: Zip win-x86 release
-      uses: papeloto/action-zip@v1
-      with:
-        files: ${{ github.workspace }}/win-x86/
-        recursive: true
-        dest: ${{ github.workspace }}/release/win-x86.zip
+    - name: Zip Folder
+      run: zip -r ${{ github.workspace }}/release/win-x86.zip ${{ github.workspace }}/win-x86/    
+
     - name: Upload win-x86 release asset
       uses: actions/upload-release-asset@v1
       env:
