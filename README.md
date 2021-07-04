@@ -16,9 +16,13 @@
 [issues]:https://github.com/koenzomers/RingSnapshotDownload/issues
 
 # Ring Snapshot Download Tool
-Console application written in .NET Core 3.1 compiled for Windows, Raspberry Pi, Linux and macOS which allows for downloading of Ring snapshots to your local machine. It is just a sample console application wrapper around the [Ring API I have written](https://github.com/KoenZomers/RingApi).
+Console application written in .NET 5.0 compiled for Windows, Raspberry Pi, Linux and macOS which allows for downloading of Ring snapshots to your local machine. It is just a sample console application wrapper around the [Ring API I have written](https://github.com/KoenZomers/RingApi).
 
 ## Version History
+
+[1.1.0.0](https://github.com/KoenZomers/RingSnapshotDownload/releases/tag/1.1.0.0) - July 4, 2021
+
+- Updated to .NET 5.0
 
 [1.0.2.0](https://github.com/KoenZomers/RingSnapshotDownload/releases/tag/1.0.2.0) - June 23, 2020
 
