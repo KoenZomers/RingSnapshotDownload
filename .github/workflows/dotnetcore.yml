@@ -16,11 +16,8 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 5.0.301
-    - name: Publish Windows x86
-      run: dotnet publish -p:PublishSingleFile=true -p:PublishTrimmed=true -r win-x86 --self-contained true -o ${{ github.workspace }}/win-x86
-    - name: Publish Windows x64
-      run: dotnet publish -p:PublishSingleFile=true -p:PublishTrimmed=true -r win-x64 --self-contained true -o ${{ github.workspace }}/win-x64      
+        dotnet-version: 5.0.301 
+        
     - name: Create release
       id: create_release
       uses: actions/create-release@v1
@@ -34,16 +31,14 @@ jobs:
           - Second Change
         draft: true
         prerelease: false
+        
+    - name: Publish Windows x86
+      run: dotnet publish -p:PublishSingleFile=true -p:PublishTrimmed=true -r win-x86 --self-contained true -o ${{ github.workspace }}/win-x86
     - name: Zip win-x86 release
       uses: papeloto/action-zip@v1
       with:
-        files: ${{ github.workspace }}/win-x86/RingSnapshotDownload.exe
+        files: ${{ github.workspace }}/win-x86/*
         dest: ${{ github.workspace }}/release/win-x86.zip
-    - name: Zip win-x64 release
-      uses: papeloto/action-zip@v1
-      with:
-        files: ${{ github.workspace }}/win-x64/RingSnapshotDownload.exe
-        dest: ${{ github.workspace }}/release/win-x64.zip        
     - name: Upload win-x86 release asset
       uses: actions/upload-release-asset@v1
       env:
@@ -53,6 +48,14 @@ jobs:
         asset_path: ${{ github.workspace }}/release/win-x86.zip
         asset_name: win-x86.zip
         asset_content_type: application/zip
+
+    - name: Publish Windows x64
+      run: dotnet publish -p:PublishSingleFile=true -p:PublishTrimmed=true -r win-x64 --self-contained true -o ${{ github.workspace }}/win-x64           
+    - name: Zip win-x64 release
+      uses: papeloto/action-zip@v1
+      with:
+        files: ${{ github.workspace }}/win-x64/*
+        dest: ${{ github.workspace }}/release/win-x64.zip        
     - name: Upload win-x64 release asset
       uses: actions/upload-release-asset@v1
       env:
