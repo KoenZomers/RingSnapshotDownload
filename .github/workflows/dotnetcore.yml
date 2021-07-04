@@ -17,10 +17,6 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 5.0.301
-    - name: Install dependencies
-      run: dotnet restore
-    - name: Build
-      run: dotnet build --configuration Release --no-restore
     - name: Publish Windows x86
       run: dotnet publish -p:PublishSingleFile=true -p:PublishTrimmed=true -r win-x86 --self-contained true -o ${{ github.workspace }}/win-x86
     - name: Create release
@@ -43,6 +39,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ${{ github.workspace }}/win-x86
+        asset_path: ${{ github.workspace }}/win-x86/RingSnapshotDownload.exe
         asset_name: RingSnapshotDownload.exe
         asset_content_type: application/exe
