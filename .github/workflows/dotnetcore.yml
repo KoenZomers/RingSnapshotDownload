@@ -76,3 +76,32 @@ jobs:
         asset_path: ${{ github.workspace }}/release/linux-arm.zip
         asset_name: linux-arm.zip
         asset_content_type: application/zip        
+
+        
+    - name: Publish Linux x64
+      run: dotnet publish -p:PublishSingleFile=true -p:PublishTrimmed=true -p:DebugType=None -p:DebugSymbols=false -r linux-x64 --self-contained true -o ${{ github.workspace }}/linux-x64
+    - name: Zip Folder
+      run: zip -r -D -j ${{ github.workspace }}/release/linux-x64.zip ${{ github.workspace }}/linux-x64/    
+    - name: Upload linux-x64 release asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ${{ github.workspace }}/release/linux-x64.zip
+        asset_name: linux-x64.zip
+        asset_content_type: application/zip 
+        
+    - name: Publish OSX x64
+      run: dotnet publish -p:PublishSingleFile=true -p:PublishTrimmed=true -p:DebugType=None -p:DebugSymbols=false -r osx-x64 --self-contained true -o ${{ github.workspace }}/osx-x64
+    - name: Zip Folder
+      run: zip -r -D -j ${{ github.workspace }}/release/osx-x64.zip ${{ github.workspace }}/osx-x64/    
+    - name: Upload linux-arm release asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ${{ github.workspace }}/release/osx-x64.zip
+        asset_name: osx-x64.zip
+        asset_content_type: application/zip         
