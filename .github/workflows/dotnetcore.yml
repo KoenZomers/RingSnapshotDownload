@@ -33,12 +33,17 @@ jobs:
           - Second Change
         draft: true
         prerelease: false
+    - name: Zip releases
+      uses: papeloto/action-zip@v1
+      with:
+        files: ${{ github.workspace }}/win-x86/RingSnapshotDownload.exe
+        dest: ${{ github.workspace }}/release/win-x86.zip
     - name: Upload release asset
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ${{ github.workspace }}/win-x86/RingSnapshotDownload.exe
+        asset_path: ${{ github.workspace }}/release/*.zip
         asset_name: RingSnapshotDownload.exe
         asset_content_type: application/exe
