@@ -21,13 +21,28 @@ jobs:
       run: dotnet restore
     - name: Build
       run: dotnet build --configuration Release --no-restore
-    - name: Publish Linux ARM
-      run: dotnet publish -p:PublishProfile=linux-arm
-    - name: Publish Linux x64
-      run: dotnet publish -p:PublishProfile=linux-x64
-    - name: Publish OSX x64
-      run: dotnet publish -p:PublishProfile=osx-x64
-    - name: Publish Windows x64
-      run: dotnet publish -p:PublishProfile=win-x64
     - name: Publish Windows x86
       run: dotnet publish -p:PublishProfile=win-x86
+    - name: Create release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        body: |
+          Changes in this Release
+          - First Change
+          - Second Change
+        draft: true
+        prerelease: false
+    - name: Upload release asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./bin/Release/net5.0/publish/win-x86/
+        asset_name: RingSnapshotDownload.exe
+        asset_content_type: application/exe
