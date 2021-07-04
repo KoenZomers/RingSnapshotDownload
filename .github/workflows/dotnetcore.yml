@@ -38,7 +38,7 @@ jobs:
     - name: Publish Windows x86
       run: dotnet publish -p:PublishSingleFile=true -p:PublishTrimmed=true -r win-x86 --self-contained true -o ${{ github.workspace }}/win-x86
     - name: Zip Folder
-      run: zip -r ${{ github.workspace }}/release/win-x86.zip ${{ github.workspace }}/win-x86/    
+      run: zip -r -j ${{ github.workspace }}/release/win-x86.zip ${{ github.workspace }}/win-x86/    
 
     - name: Upload win-x86 release asset
       uses: actions/upload-release-asset@v1
