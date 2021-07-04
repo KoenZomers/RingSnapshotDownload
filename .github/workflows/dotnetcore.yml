@@ -31,6 +31,9 @@ jobs:
           - Second Change
         draft: true
         prerelease: false
+    - name: Create release folder
+      run: |
+        mkdir -p ${{ github.workspace }}/release
         
     - name: Publish Windows x86
       run: dotnet publish -p:PublishSingleFile=true -p:PublishTrimmed=true -r win-x86 --self-contained true -o ${{ github.workspace }}/win-x86
