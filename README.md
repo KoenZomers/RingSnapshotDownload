@@ -2,11 +2,13 @@
 [![stars badge]][stars]
 [![forks badge]][forks]
 [![issues badge]][issues]
+[![.NET Core](https://github.com/KoenZomers/RingSnapshotDownload/actions/workflows/ci.yaml/badge.svg)](https://github.com/KoenZomers/RingSnapshotDownload/actions/workflows/ci.yaml)
 
 [licence badge]:https://img.shields.io/badge/license-Apache2-blue.svg
 [stars badge]:https://img.shields.io/github/stars/koenzomers/RingSnapshotDownload.svg
 [forks badge]:https://img.shields.io/github/forks/koenzomers/RingSnapshotDownload.svg
 [issues badge]:https://img.shields.io/github/issues/koenzomers/RingSnapshotDownload.svg
+
 
 [licence]:https://github.com/koenzomers/RingSnapshotDownload/blob/master/LICENSE.md
 [stars]:https://github.com/koenzomers/RingSnapshotDownload/stargazers
