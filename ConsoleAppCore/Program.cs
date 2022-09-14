@@ -84,7 +84,7 @@ namespace KoenZomers.Ring.SnapshotDownload
                 catch (Api.Exceptions.TwoFactorAuthenticationRequiredException)
                 {
                     // Two factor authentication is enabled on the account. The above Authenticate() will trigger a text or e-mail message to be sent. Ask for the token sent in that message here.
-                    Console.WriteLine($"Two factor authentication enabled on this account, please enter the token received in the text message on your phone or the e-mail from Ring:");
+                    Console.WriteLine($"Two factor authentication enabled on this account, please enter the Ring token from the e-mail, text message or authenticator app:");
                     var token = Console.ReadLine();
 
                     // Authenticate again using the two factor token
