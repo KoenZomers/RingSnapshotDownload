@@ -22,7 +22,7 @@ Console application written in .NET 6 compiled for Windows, Raspberry Pi, Linux 
 
 [1.2.0.0](https://github.com/KoenZomers/RingSnapshotDownload/releases/tag/1.2.0.0) - September 14, 2022
 
-- Upgraded to [Ring API v0.5.0.0](https://github.com/KoenZomers/RingApi#version-history)
+- Upgraded to [Ring API v0.5.0.1](https://github.com/KoenZomers/RingApi#version-history)
 
 [1.1.1.0](https://github.com/KoenZomers/RingSnapshotDownload/releases/tag/1.1.1.0) - September 14, 2022
 
