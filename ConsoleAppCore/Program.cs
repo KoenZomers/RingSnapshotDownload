@@ -168,7 +168,7 @@ namespace KoenZomers.Ring.SnapshotDownload
                 if(doorbotTimeStamps.Timestamp.Count > 0)
                 {
                     // Filter out timestamps which are not for the doorbot we are requesting and take the most recent snapshot only
-                    var latestDoorbotTimeStamp = doorbotTimeStamps.Timestamp.Where(t => t.DoorbotId == Configuration.DeviceId.Value.ToString()).OrderByDescending(t => t.TimestampEpoch).FirstOrDefault();
+                    var latestDoorbotTimeStamp = doorbotTimeStamps.Timestamp.Where(t => t.DoorbotId.HasValue && t.DoorbotId.Value == Configuration.DeviceId.Value).OrderByDescending(t => t.TimestampEpoch).FirstOrDefault();
 
                     // If we have a result and the result has an Epoch timestamp on it, use that as the marker for when the screenshot has been taken
                     if (latestDoorbotTimeStamp != null && latestDoorbotTimeStamp.TimestampEpoch.HasValue)
