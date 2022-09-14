@@ -2,12 +2,12 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <RootNamespace>KoenZomers.Ring.SnapshotDownload</RootNamespace>
     <AssemblyName>RingSnapshotDownload</AssemblyName>
     <PackageId>KoenZomers.Ring.SnapshotDownload</PackageId>
     <Authors>Koen Zomers</Authors>
-    <Version>1.1.0.2</Version>
+    <Version>1.1.1.0</Version>
     <Product>Ring Snapshot Download</Product>
     <Description>Allows downloading of the latest available snapshot from Ring devices to your local machine</Description>
     <Copyright>Koen Zomers</Copyright>
@@ -15,8 +15,8 @@
     <PackageTags>Ring</PackageTags>
     <PackageReleaseNotes>- Added additional error handling around reading the config file
 - Fixed an issue with reading from the config file on non Windows environments</PackageReleaseNotes>
-    <AssemblyVersion>1.1.0.2</AssemblyVersion>
-    <FileVersion>1.1.0.2</FileVersion>
+    <AssemblyVersion>1.1.1.0</AssemblyVersion>
+    <FileVersion>1.1.1.0</FileVersion>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
 
@@ -29,6 +29,14 @@
     <DebugType>portable</DebugType>
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="Properties\PublishProfiles\linux-arm.pubxml.user" />
+    <None Include="Properties\PublishProfiles\linux-x64.pubxml.user" />
+    <None Include="Properties\PublishProfiles\osx-x64.pubxml.user" />
+    <None Include="Properties\PublishProfiles\win-x64.pubxml.user" />
+    <None Include="Properties\PublishProfiles\win-x86.pubxml.user" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="KoenZomers.Ring.Api" Version="0.4.3.2" />
