@@ -7,17 +7,18 @@
     <AssemblyName>RingSnapshotDownload</AssemblyName>
     <PackageId>KoenZomers.Ring.SnapshotDownload</PackageId>
     <Authors>Koen Zomers</Authors>
-    <Version>1.2.0.0</Version>
+    <Version>1.3.0.0</Version>
     <Product>Ring Snapshot Download</Product>
     <Description>Allows downloading of the latest available snapshot from Ring devices to your local machine</Description>
     <Copyright>Koen Zomers</Copyright>
     <PackageProjectUrl>https://github.com/KoenZomers/RingSnapshotDownload</PackageProjectUrl>
-    <PackageTags>Ring</PackageTags>
-    <PackageReleaseNotes>- Added additional error handling around reading the config file
-- Fixed an issue with reading from the config file on non Windows environments</PackageReleaseNotes>
-    <AssemblyVersion>1.2.0.0</AssemblyVersion>
-    <FileVersion>1.2.0.0</FileVersion>
+    <PackageTags>Ring;Ring Doorbell;C#;dotnet6</PackageTags>
+    <PackageReleaseNotes>- Upgraded to Ring API v0.5.2.0</PackageReleaseNotes>
+    <AssemblyVersion>1.3.0.0</AssemblyVersion>
+    <FileVersion>1.3.0.0</FileVersion>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/KoenZomers/RingSnapshotDownload</RepositoryUrl>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -31,6 +32,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
     <None Include="Properties\PublishProfiles\linux-arm.pubxml.user" />
     <None Include="Properties\PublishProfiles\linux-x64.pubxml.user" />
     <None Include="Properties\PublishProfiles\osx-x64.pubxml.user" />
@@ -39,7 +44,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="KoenZomers.Ring.Api" Version="0.5.0.1" />
+    <PackageReference Include="KoenZomers.Ring.Api" Version="0.5.2" />
   </ItemGroup>
 
   <ItemGroup>
