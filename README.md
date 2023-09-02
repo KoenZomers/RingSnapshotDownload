@@ -20,7 +20,12 @@ Console application written in .NET 6 compiled for Windows, Raspberry Pi, Linux 
 
 ## Version History
 
-[1.3.0.0](https://github.com/KoenZomers/RingSnapshotDownload/releases/tag/1.2.0.0) - July 4, 2023
+[1.4.0.0](https://github.com/KoenZomers/RingSnapshotDownload/releases/tag/1.4.0.0) - September 2, 2023
+
+- Added -validateimage option that will check if the downloaded image is valid
+- Upgraded to [Ring API v0.5.3.0](https://github.com/KoenZomers/RingApi#version-history)
+
+[1.3.0.0](https://github.com/KoenZomers/RingSnapshotDownload/releases/tag/1.3.0.0) - July 4, 2023
 
 - Upgraded to [Ring API v0.5.2.0](https://github.com/KoenZomers/RingApi#version-history)
 

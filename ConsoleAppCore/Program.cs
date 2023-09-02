@@ -8,6 +8,7 @@ using System.Threading;
 using System.Linq;
 using System.Net;
 using System.Diagnostics;
+using SixLabors.ImageSharp;
 
 namespace KoenZomers.Ring.SnapshotDownload
 {
@@ -183,25 +184,69 @@ namespace KoenZomers.Ring.SnapshotDownload
                 var downloadFullPath = Path.Combine(Configuration.OutputPath, downloadFileName);
 
                 // Retrieve the snapshot
-                Console.WriteLine($"Downloading snapshot from Ring device with ID {Configuration.DeviceId} to {downloadFullPath}");
+                Console.Write($"Downloading snapshot from Ring device with ID {Configuration.DeviceId}... ");
                 short attempt = 0;
+                var downloadSucceeded = false;
+                var imageValidationSucceeded = true;
+                var savingSucceeded = false;
                 do
                 {
                     attempt++;
+
+                    Stream imageStream = null;
                     try
                     {
-                        await session.GetLatestSnapshot(Configuration.DeviceId.Value, downloadFullPath);
-                        break;
+                        imageStream = await session.GetLatestSnapshot(Configuration.DeviceId.Value);
+                        downloadSucceeded = true;
+                        Console.WriteLine("OK");
                     }
                     catch (WebException e) when (e.Message.Contains("404"))
                     {
                         // Ring tends to throw a 404 if it has no snapshot available and couldn't retrieve one in time, retry it
-                        Console.WriteLine($"Not found returned by Ring API, retrying ({attempt}/{Configuration.MaximumRetries})");
+                        Console.WriteLine($"Failed: not found returned by Ring API, retrying ({attempt}/{Configuration.MaximumRetries})");
                         Thread.Sleep(TimeSpan.FromSeconds(1));
                     }
-                } while (attempt < Configuration.MaximumRetries);
 
-                Console.WriteLine();
+                    // Check if the image should be validated to not be corrupt
+                    if(downloadSucceeded && Configuration.ValidateImage)
+                    {
+                        Console.Write("Validating image... ");
+                        try
+                        {
+                            await Image.DetectFormatAsync(imageStream);
+
+                            Console.WriteLine("OK");
+                        }
+                        catch(InvalidImageContentException)
+                        {
+                            Console.WriteLine($"Failed: image content corrupt, retrying ({attempt}/{Configuration.MaximumRetries})");
+                            imageValidationSucceeded = false;
+                        }
+                        catch(UnknownImageFormatException)
+                        {
+                            Console.WriteLine($"Failed: image content not recognized, retrying ({attempt}/{Configuration.MaximumRetries})");
+                            imageValidationSucceeded = false;
+                        }
+                    }
+
+                    if(downloadSucceeded && imageValidationSucceeded)
+                    {
+                        Console.Write($"Saving image to {downloadFullPath}... ");
+                        try
+                        {
+                            using Stream file = File.Create(downloadFullPath);
+                            await imageStream.CopyToAsync(file);
+                            savingSucceeded = true;
+                            Console.WriteLine("OK");
+                        }
+                        catch(Exception e)
+                        {
+                            Console.WriteLine($"Failed: {e.Message}, retrying ({attempt}/{Configuration.MaximumRetries})");
+                            savingSucceeded = false;
+                        }
+                    }
+
+                } while ((!downloadSucceeded || !imageValidationSucceeded || !savingSucceeded) && attempt < Configuration.MaximumRetries);
             }
             
             Console.WriteLine("Done");
@@ -262,6 +307,11 @@ namespace KoenZomers.Ring.SnapshotDownload
                     Configuration.MaximumRetries = maxretries;
                 }
             }
+
+            if (args.Contains("-validateimage"))
+            {
+                Configuration.ValidateImage = true;
+            }
         }
 
         /// <summary>
@@ -278,6 +328,7 @@ namespace KoenZomers.Ring.SnapshotDownload
             Console.WriteLine("list: Returns the list with all Ring devices and their ids you can user with -deviceid");
             Console.WriteLine("deviceid: Id of the Ring device from wich you want to capture the screenshot. Use -list to retrieve all ids.");
             Console.WriteLine("forceupdate: Requests the Ring device to capture a new snapshot before downloading. If not provided, the latest cached snapshot will be taken.");
+            Console.WriteLine("validateimage: Run a check to try to validate if the downloaded image file is valid. Will retry with the maxretries value if its not valid.");
             Console.WriteLine("maxretries: Amount of times to retry downloading the snapshot when Ring returns an error. 3 is default.");
             Console.WriteLine();
             Console.WriteLine("Example:");

@@ -58,6 +58,11 @@ namespace KoenZomers.Ring.SnapshotDownload
         public bool ForceUpdateSnapshot { get; set; } = true;
 
         /// <summary>
+        /// Boolean indicating if the downloaded image should be validated if it's a valid image
+        /// </summary>
+        public bool ValidateImage { get; set; } = false;
+
+        /// <summary>
         /// Amount of times to retry downloading a snapshot if a 404 not found is being returned
         /// </summary>
         public short MaximumRetries { get; set; } = 3;
