@@ -183,8 +183,7 @@ namespace KoenZomers.Ring.SnapshotDownload
                 var downloadFileName = $"{Configuration.DeviceId} - {timeStamp:yyyy-MM-dd HH-mm-ss}.jpg";
                 var downloadFullPath = Path.Combine(Configuration.OutputPath, downloadFileName);
 
-                // Retrieve the snapshot
-                Console.Write($"Downloading snapshot from Ring device with ID {Configuration.DeviceId}... ");
+                // Retrieve the snapshot                
                 short attempt = 0;
                 var downloadSucceeded = false;
                 var imageValidationSucceeded = true;
@@ -196,14 +195,24 @@ namespace KoenZomers.Ring.SnapshotDownload
                     Stream imageStream = null;
                     try
                     {
+                        Console.Write($"Downloading snapshot from Ring device with ID {Configuration.DeviceId}... ");
+
                         imageStream = await session.GetLatestSnapshot(Configuration.DeviceId.Value);
                         downloadSucceeded = true;
+                        
                         Console.WriteLine("OK");
                     }
-                    catch (WebException e) when (e.Message.Contains("404"))
+                    catch (Exception e)
                     {
-                        // Ring tends to throw a 404 if it has no snapshot available and couldn't retrieve one in time, retry it
-                        Console.WriteLine($"Failed: not found returned by Ring API, retrying ({attempt}/{Configuration.MaximumRetries})");
+                        if (e is WebException webEx && webEx.Message.Contains("404"))
+                        {
+                            // Ring tends to throw a 404 if it has no snapshot available and couldn't retrieve one in time, retry it
+                            Console.WriteLine($"Failed: not found returned by Ring API, retrying ({attempt}/{Configuration.MaximumRetries})");
+                        }
+                        else
+                        {
+                            Console.WriteLine($"Failed: {e.Message}, retrying ({attempt}/{Configuration.MaximumRetries})");
+                        }
                         Thread.Sleep(TimeSpan.FromSeconds(1));
                     }
 
