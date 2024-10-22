@@ -7,15 +7,15 @@
     <AssemblyName>RingSnapshotDownload</AssemblyName>
     <PackageId>KoenZomers.Ring.SnapshotDownload</PackageId>
     <Authors>Koen Zomers</Authors>
-    <Version>1.4.0.0</Version>
+    <Version>3.0.0.0</Version>
     <Product>Ring Snapshot Download</Product>
     <Description>Allows downloading of the latest available snapshot from Ring devices to your local machine</Description>
     <Copyright>Koen Zomers</Copyright>
     <PackageProjectUrl>https://github.com/KoenZomers/RingSnapshotDownload</PackageProjectUrl>
     <PackageTags>Ring;Ring Doorbell;C#;dotnet6</PackageTags>
-    <PackageReleaseNotes>- Added -validateimage option that will check if the downloaded image is valid</PackageReleaseNotes>
-    <AssemblyVersion>1.4.0.0</AssemblyVersion>
-    <FileVersion>1.4.0.0</FileVersion>
+    <PackageReleaseNotes>- Updated Session creation APIs to comply with the new Ring APIs</PackageReleaseNotes>
+    <AssemblyVersion>3.0.0.0</AssemblyVersion>
+    <FileVersion>3.0.0.0</FileVersion>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/KoenZomers/RingSnapshotDownload</RepositoryUrl>
@@ -49,7 +49,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="SixLabors.ImageSharp" Version="3.0.2" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.5" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="8.0.1" />
   </ItemGroup>
 
   <ItemGroup>

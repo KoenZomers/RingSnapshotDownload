@@ -20,6 +20,10 @@ Console application written in .NET 6 compiled for Windows, Raspberry Pi, Linux 
 
 ## Version History
 
+[3.0.0.0](https://github.com/KoenZomers/RingSnapshotDownload/releases/tag/3.0.0.0) - Oct 22, 2024
+
+- Updated Session creation APIs to comply with the new Ring APIs.
+
 [2.1.0.0](https://github.com/KoenZomers/RingSnapshotDownload/releases/tag/2.1.0.0) - September 3, 2023
 
 - Modified the error handling while downloading an image slightly
