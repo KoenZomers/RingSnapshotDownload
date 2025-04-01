@@ -117,7 +117,3 @@ With this tool in its current state you can:
 - Download the latest snapshot from your Ring device
 - List all Ring doorbells and Ring stickupcams you have available under your Ring account
 - Force the Ring device to capture a fresh snapshot
-
-## Feedback
-
-Any kind of feedback is welcome! Feel free to drop me an e-mail at koen@zomers.eu or [create an issue](https://github.com/KoenZomers/RingSnapshotDownload/issues).
